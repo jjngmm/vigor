@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>vigor — Salud Masculina · Performance</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital,wght@0,400;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream:       #F5F2EC;
+    --offwhite:    #EDEAE2;
+    --stone:       #D8D3C8;
+    --warm:        #B8B2A6;
+    --mid:         #7A7570;
+    --ink:         #1A1816;
+    --green:       #1C3D2E;
+    --green-mid:   #2A5940;
+    --green-light: #3D7A58;
+    --green-pale:  #EBF2EE;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  .cursor {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--green);
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transition: width 0.3s, height 0.3s, background 0.3s;
+  }
+  .cursor.hover { width: 40px; height: 40px; background: rgba(28,61,46,0.15); }
+  .cursor-ring {
+    width: 30px; height: 30px;
+    border: 1.5px solid rgba(28,61,46,0.3);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transition: transform 0.38s cubic-bezier(0.23,1,0.32,1);
+  }
+
+  /* ── TEXTURE ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: 0.022; pointer-events: none; z-index: 1000;
+  }
+
+  /* ══════════════════════════════════════
+     NAV
+  ══════════════════════════════════════ */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+    padding: 0 64px;
+    height: 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(245,242,236,0.9);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  nav.scrolled {
+    border-color: var(--stone);
+    background: rgba(245,242,236,0.97);
+  }
+
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .nav-logo .v { color: var(--green); }
+
+  .nav-links { display: flex; gap: 40px; list-style: none; }
+  .nav-links a {
+    font-size: 13px; font-weight: 400;
+    color: var(--mid); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+
+  .nav-cta {
+    display: flex; align-items: center; gap: 16px;
+  }
+  .nav-btn-ghost {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 400;
+    color: var(--ink); background: none;
+    border: 1px solid var(--stone);
+    padding: 10px 22px; cursor: none;
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .nav-btn-ghost:hover { border-color: var(--ink); }
+
+  .nav-btn-solid {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    color: var(--cream); background: var(--green);
+    border: none; padding: 11px 24px; cursor: none;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-btn-solid:hover { background: var(--green-mid); transform: translateY(-1px); }
+
+  /* ══════════════════════════════════════
+     HERO
+  ══════════════════════════════════════ */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+    padding-top: 72px;
+  }
+
+  /* dot grid */
+  .hero-dots {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(26,24,22,0.06) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+  }
+
+  /* green glow top right */
+  .hero-glow {
+    position: absolute;
+    width: 800px; height: 800px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(28,61,46,0.06) 0%, transparent 70%);
+    top: -200px; right: -200px; pointer-events: none;
+  }
+
+  .hero-left {
+    display: flex; flex-direction: column;
+    justify-content: center;
+    padding: 80px 72px 100px 64px;
+    position: relative; z-index: 2;
+  }
+
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 40px;
+    opacity: 0; animation: fadeUp 0.7s 0.1s forwards;
+  }
+  .hero-eyebrow-line { width: 40px; height: 1px; background: var(--green-light); }
+  .hero-eyebrow span {
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--green-mid);
+  }
+
+  .hero-title {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 32px;
+    opacity: 0; animation: fadeUp 0.7s 0.25s forwards;
+  }
+  .hero-title .green { color: var(--green); }
+  .hero-title .outline {
+    -webkit-text-stroke: 1.5px var(--green);
+    color: transparent; font-style: normal;
+  }
+
+  .hero-sub {
+    font-size: 17px; font-weight: 300;
+    color: var(--mid); line-height: 1.8;
+    max-width: 480px; margin-bottom: 48px;
+    opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
+  }
+
+  .hero-actions {
+    display: flex; gap: 16px; align-items: center;
+    opacity: 0; animation: fadeUp 0.7s 0.55s forwards;
+  }
+
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: 0.06em;
+    color: var(--cream); background: var(--green);
+    border: none; padding: 16px 36px; cursor: none;
+    transition: background 0.25s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--green-mid); transform: translateY(-2px); }
+
+  .btn-ghost {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 400;
+    color: var(--ink); background: none;
+    border: 1px solid var(--stone);
+    padding: 16px 32px; cursor: none;
+    transition: border-color 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--ink); }
+
+  .hero-trust {
+    margin-top: 56px;
+    display: flex; align-items: center; gap: 24px;
+    opacity: 0; animation: fadeUp 0.7s 0.7s forwards;
+  }
+  .hero-trust-line { width: 1px; height: 28px; background: var(--stone); }
+  .hero-trust-item { text-align: center; }
+  .hero-trust-num {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 28px; line-height: 1;
+    color: var(--ink); letter-spacing: -0.02em;
+  }
+  .hero-trust-num span { color: var(--green); }
+  .hero-trust-label {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--warm); margin-top: 5px;
+  }
+
+  /* ── HERO RIGHT ── */
+  .hero-right {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    padding: 80px 64px 100px 0;
+    opacity: 0; animation: fadeUp 0.8s 0.4s forwards;
+  }
+
+  .hero-card-stack {
+    position: relative;
+    width: 340px;
+  }
+
+  /* tarjeta de fondo */
+  .hero-card-stack::before {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px; right: -20px; bottom: -20px;
+    background: var(--offwhite);
+    border: 1px solid var(--stone);
+    border-radius: 2px;
+  }
+
+  .hero-card {
+    position: relative;
+    background: var(--cream);
+    border: 1px solid var(--stone);
+    border-radius: 2px;
+    padding: 36px 32px;
+    box-shadow: 0 32px 80px rgba(26,24,22,0.1);
+  }
+
+  .hero-card-label {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 9px; font-weight: 500;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--green-mid);
+    margin-bottom: 24px;
+  }
+  .hero-card-label::before {
+    content: ''; width: 5px; height: 5px;
+    border-radius: 50%; background: var(--green);
+  }
+
+  .hero-card-title {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 28px; line-height: 1.15;
+    letter-spacing: -0.01em;
+    color: var(--ink); margin-bottom: 20px;
+  }
+
+  .hero-card-items {
+    display: flex; flex-direction: column; gap: 12px;
+    margin-bottom: 28px;
+  }
+  .hero-card-item {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; font-weight: 300; color: var(--mid);
+  }
+  .hero-card-item::before {
+    content: ''; width: 18px; height: 1px;
+    background: var(--green-light); flex-shrink: 0;
+  }
+
+  .hero-card-btn {
+    width: 100%;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px; font-weight: 500;
+    letter-spacing: 0.08em;
+    color: var(--cream); background: var(--green);
+    border: none; padding: 14px; cursor: none;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .hero-card-btn:hover { background: var(--green-mid); }
+
+  .hero-card-footer {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 16px;
+    font-size: 11px; font-weight: 300; color: var(--warm);
+  }
+  .hero-card-footer svg { flex-shrink: 0; }
+
+  /* ── TICKER ── */
+  .ticker {
+    border-top: 1px solid var(--stone);
+    border-bottom: 1px solid var(--stone);
+    background: var(--ink);
+    padding: 14px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    display: inline-flex; gap: 0;
+    animation: ticker 28s linear infinite;
+  }
+  .ticker-item {
+    display: inline-flex; align-items: center; gap: 24px;
+    padding: 0 32px;
+    font-size: 11px; font-weight: 500;
+    letter-spacing: 0.28em; text-transform: uppercase;
+    color: rgba(245,242,236,0.45);
+  }
+  .ticker-item .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--green-light); }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ══════════════════════════════════════
+     SECCIONES COMUNES
+  ══════════════════════════════════════ */
+  .section-label {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--green-mid); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before {
+    content: ''; width: 24px; height: 1px;
+    background: var(--green-light); display: block;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  /* ══════════════════════════════════════
+     LÍNEAS DE PRODUCTO
+  ══════════════════════════════════════ */
+  .products {
+    padding: 120px 64px;
+    background: var(--offwhite);
+    border-top: 1px solid var(--stone);
+  }
+
+  .products-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-end; margin-bottom: 64px;
+  }
+  .products-header a {
+    font-size: 13px; font-weight: 400;
+    color: var(--green); text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    transition: gap 0.2s;
+  }
+  .products-header a:hover { gap: 14px; }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--stone);
+    border: 1px solid var(--stone);
+  }
+
+  .product-card {
+    background: var(--cream);
+    padding: 44px 32px 40px;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+    cursor: none;
+  }
+  .product-card:hover { background: #F0ECE4; }
+
+  /* barra superior hover */
+  .product-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--green);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s cubic-bezier(0.23,1,0.32,1);
+  }
+  .product-card:hover::before { transform: scaleX(1); }
+
+  /* número fantasma */
+  .product-num-ghost {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 100px; line-height: 1;
+    color: rgba(28,61,46,0.05);
+    position: absolute; top: -12px; right: 16px;
+    pointer-events: none;
+  }
+
+  .product-tag {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 9px; font-weight: 500;
+    letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--green-mid);
+    border: 1px solid rgba(28,61,46,0.2);
+    padding: 5px 12px; border-radius: 100px;
+    margin-bottom: 24px;
+    transition: background 0.3s;
+  }
+  .product-tag::before {
+    content: ''; width: 4px; height: 4px;
+    border-radius: 50%; background: var(--green-light);
+  }
+  .product-card:hover .product-tag { background: var(--green-pale); }
+
+  .product-name {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 30px; line-height: 1.05;
+    letter-spacing: -0.01em;
+    color: var(--ink); margin-bottom: 16px;
+  }
+
+  .product-desc {
+    font-size: 13px; font-weight: 300;
+    color: var(--mid); line-height: 1.8;
+    margin-bottom: 28px;
+  }
+
+  .product-cta {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; font-weight: 500;
+    color: var(--green); text-decoration: none;
+    transition: gap 0.2s;
+  }
+  .product-cta:hover { gap: 16px; }
+  .product-cta-line { width: 20px; height: 1px; background: var(--green-light); }
+
+  /* ══════════════════════════════════════
+     CÓMO FUNCIONA
+  ══════════════════════════════════════ */
+  .how {
+    padding: 120px 64px;
+    background: var(--cream);
+    border-top: 1px solid var(--stone);
+  }
+
+  .how-header {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 80px; align-items: end;
+    margin-bottom: 80px;
+  }
+
+  .how-sub {
+    font-size: 15px; font-weight: 300;
+    color: var(--mid); line-height: 1.85;
+    padding-bottom: 8px;
+  }
+
+  .how-steps {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1px; background: var(--stone);
+    border: 1px solid var(--stone);
+  }
+
+  .how-step {
+    background: var(--offwhite);
+    padding: 48px 36px;
+    position: relative; overflow: hidden;
+    transition: background 0.3s;
+  }
+  .how-step:hover { background: #EAE6DD; }
+
+  .how-step-num {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 80px; line-height: 1;
+    color: rgba(28,61,46,0.07);
+    position: absolute; top: -12px; right: 20px;
+    pointer-events: none;
+  }
+
+  .how-step-icon {
+    width: 44px; height: 44px;
+    border: 1px solid var(--stone);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 24px;
+    font-size: 18px;
+    transition: border-color 0.3s, background 0.3s;
+  }
+  .how-step:hover .how-step-icon { border-color: var(--green); background: var(--green-pale); }
+
+  .how-step h3 {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 22px; color: var(--ink);
+    margin-bottom: 12px; line-height: 1.2;
+  }
+  .how-step p { font-size: 13px; font-weight: 300; color: var(--mid); line-height: 1.8; }
+
+  /* ══════════════════════════════════════
+     QUOTE / MANIFESTO
+  ══════════════════════════════════════ */
+  .manifesto {
+    background: var(--green);
+    padding: 120px 64px;
+    display: grid; grid-template-columns: 1fr 2fr;
+    gap: 80px; align-items: center;
+  }
+
+  .manifesto-label {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: rgba(235,242,238,0.5);
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .manifesto-label::before {
+    content: ''; width: 40px; height: 1px;
+    background: rgba(235,242,238,0.3);
+  }
+
+  .manifesto-quote {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(26px, 4vw, 48px);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    color: rgba(235,242,238,0.92);
+    border-left: 2px solid rgba(235,242,238,0.2);
+    padding-left: 40px;
+  }
+
+  /* ══════════════════════════════════════
+     TESTIMONIOS
+  ══════════════════════════════════════ */
+  .testimonials {
+    padding: 120px 64px;
+    background: var(--offwhite);
+    border-top: 1px solid var(--stone);
+  }
+
+  .testimonials-header {
+    display: flex; justify-content: space-between;
+    align-items: flex-end; margin-bottom: 64px;
+  }
+
+  .testimonials-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+  }
+
+  .testimonial-card {
+    background: var(--cream);
+    border: 1px solid var(--stone);
+    padding: 36px 32px;
+    border-radius: 2px;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: none;
+  }
+  .testimonial-card:hover { border-color: var(--green); transform: translateY(-4px); }
+
+  .testimonial-stars {
+    display: flex; gap: 3px; margin-bottom: 20px;
+  }
+  .star {
+    width: 12px; height: 12px;
+    background: var(--green);
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+
+  .testimonial-text {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 16px; line-height: 1.65;
+    color: var(--ink); margin-bottom: 24px;
+  }
+
+  .testimonial-author {
+    display: flex; align-items: center; gap: 14px;
+    border-top: 1px solid var(--offwhite);
+    padding-top: 20px;
+  }
+  .testimonial-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: var(--green-pale);
+    border: 1px solid rgba(28,61,46,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 16px; color: var(--green);
+    flex-shrink: 0;
+  }
+  .testimonial-name {
+    font-size: 13px; font-weight: 500; color: var(--ink);
+    margin-bottom: 3px;
+  }
+  .testimonial-meta {
+    font-size: 11px; font-weight: 300; color: var(--warm);
+  }
+
+  /* ══════════════════════════════════════
+     LÍNEA DIARIO DESTACADA
+  ══════════════════════════════════════ */
+  .feature-strip {
+    display: grid; grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--stone);
+  }
+
+  .feature-strip-left {
+    background: var(--ink); padding: 100px 64px;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .feature-strip-left .section-label { color: var(--green-light); }
+  .feature-strip-left .section-label::before { background: var(--green-light); }
+  .feature-strip-left .section-title { color: var(--cream); margin-bottom: 20px; }
+  .feature-strip-left p { font-size: 15px; font-weight: 300; color: var(--warm); line-height: 1.85; max-width: 440px; margin-bottom: 40px; }
+
+  .feature-strip-right {
+    background: var(--green);
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1px; background-image: none;
+    position: relative; overflow: hidden;
+  }
+
+  .feature-strip-right::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--green);
+    z-index: 0;
+  }
+
+  .feature-item {
+    position: relative; z-index: 1;
+    background: rgba(255,255,255,0.0);
+    border: 1px solid rgba(255,255,255,0.08);
+    padding: 44px 36px;
+    transition: background 0.3s;
+  }
+  .feature-item:hover { background: rgba(255,255,255,0.04); }
+
+  .feature-item-icon {
+    font-size: 24px; margin-bottom: 16px; display: block;
+  }
+  .feature-item h4 {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic; font-size: 18px;
+    color: var(--cream); margin-bottom: 8px;
+  }
+  .feature-item p {
+    font-size: 12px; font-weight: 300;
+    color: rgba(235,242,238,0.55); line-height: 1.7;
+  }
+
+  /* ══════════════════════════════════════
+     CTA FINAL
+  ══════════════════════════════════════ */
+  .cta-section {
+    padding: 140px 64px;
+    background: var(--cream);
+    border-top: 1px solid var(--stone);
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(28,61,46,0.05) 1px, transparent 1px);
+    background-size: 36px 36px;
+    pointer-events: none;
+  }
+
+  .cta-eyebrow {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.4em; text-transform: uppercase;
+    color: var(--green-mid); margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+  }
+  .cta-eyebrow::before, .cta-eyebrow::after {
+    content: ''; flex: 0 0 40px; height: 1px;
+    background: var(--green-light);
+  }
+
+  .cta-title {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: clamp(40px, 7vw, 80px);
+    line-height: 1.0; letter-spacing: -0.02em;
+    color: var(--ink); margin-bottom: 24px;
+    position: relative; z-index: 1;
+  }
+  .cta-title .outline {
+    -webkit-text-stroke: 1.5px var(--green);
+    color: transparent; font-style: normal;
+  }
+
+  .cta-sub {
+    font-size: 16px; font-weight: 300;
+    color: var(--mid); line-height: 1.8;
+    max-width: 520px; margin: 0 auto 52px;
+    position: relative; z-index: 1;
+  }
+
+  .cta-actions {
+    display: flex; justify-content: center;
+    gap: 16px; align-items: center;
+    position: relative; z-index: 1;
+  }
+
+  .cta-note {
+    margin-top: 24px;
+    font-size: 12px; font-weight: 300;
+    color: var(--warm); letter-spacing: 0.05em;
+    position: relative; z-index: 1;
+  }
+
+  /* ══════════════════════════════════════
+     FOOTER
+  ══════════════════════════════════════ */
+  footer {
+    background: var(--ink);
+    padding: 72px 64px 48px;
+    display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 48px;
+  }
+
+  .footer-brand {}
+  .footer-logo-text {
+    font-family: 'DM Serif Display', serif;
+    font-style: italic;
+    font-size: 48px; line-height: 1;
+    letter-spacing: -0.02em; color: var(--cream);
+    margin-bottom: 16px; display: block;
+  }
+  .footer-logo-text .v { color: var(--green-light); }
+  .footer-brand p {
+    font-size: 13px; font-weight: 300;
+    color: var(--mid); line-height: 1.8;
+    max-width: 260px; margin-bottom: 32px;
+  }
+
+  .footer-col h5 {
+    font-size: 10px; font-weight: 500;
+    letter-spacing: 0.3em; text-transform: uppercase;
+    color: var(--green-light); margin-bottom: 20px;
+  }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col ul li a {
+    font-size: 13px; font-weight: 300;
+    color: var(--warm); text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-col ul li a:hover { color: var(--cream); }
+
+  .footer-bottom {
+    background: var(--ink);
+    padding: 24px 64px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    display: flex; justify-content: space-between;
+    align-items: center;
+  }
+  .footer-bottom p {
+    font-size: 11px; font-weight: 300;
+    color: var(--mid); letter-spacing: 0.05em;
+  }
+
+  /* ── ANIMS ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(28px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0; transform: translateY(36px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity:1; transform:translateY(0); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--cream); }
+  ::-webkit-scrollbar-thumb { background: var(--green); }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="ring"></div>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <a href="#" class="nav-logo"><span class="v">v</span>igor</a>
+  <ul class="nav-links">
+    <li><a href="#productos">Líneas</a></li>
+    <li><a href="#como-funciona">Cómo funciona</a></li>
+    <li><a href="#testimonios">Testimonios</a></li>
+  </ul>
+  <div class="nav-cta">
+    <button class="nav-btn-ghost">Iniciar sesión</button>
+    <button class="nav-btn-solid">Comenzar →</button>
+  </div>
+</nav>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="hero-dots"></div>
+  <div class="hero-glow"></div>
+
+  <div class="hero-left">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-line"></div>
+      <span>Salud Masculina · Performance</span>
+    </div>
+
+    <h1 class="hero-title">
+      Rinde al<br>
+      <span class="green">máximo</span><br>
+      <span class="outline">siempre.</span>
+    </h1>
+
+    <p class="hero-sub">
+      Diagnósticos rápidos, tratamientos efectivos y entregas directas. Conveniencia clínica sin la fricción de la medicina tradicional.
+    </p>
+
+    <div class="hero-actions">
+      <button class="btn-primary">Iniciar evaluación gratuita</button>
+      <button class="btn-ghost">Ver líneas de producto</button>
+    </div>
+
+    <div class="hero-trust">
+      <div class="hero-trust-item">
+        <div class="hero-trust-num"><span>24</span>h</div>
+        <div class="hero-trust-label">Diagnóstico</div>
+      </div>
+      <div class="hero-trust-line"></div>
+      <div class="hero-trust-item">
+        <div class="hero-trust-num">4</div>
+        <div class="hero-trust-label">Líneas</div>
+      </div>
+      <div class="hero-trust-line"></div>
+      <div class="hero-trust-item">
+        <div class="hero-trust-num"><span>0</span>°</div>
+        <div class="hero-trust-label">Estigmas</div>
+      </div>
+      <div class="hero-trust-line"></div>
+      <div class="hero-trust-item">
+        <div class="hero-trust-num"><span>100</span>%</div>
+        <div class="hero-trust-label">Privado</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="hero-card-stack">
+      <div class="hero-card">
+        <div class="hero-card-label">Vigor Capilar</div>
+        <div class="hero-card-title">Tu plan personalizado está listo.</div>
+        <div class="hero-card-items">
+          <div class="hero-card-item">Evaluación completada en 5 min</div>
+          <div class="hero-card-item">Revisado por médico especialista</div>
+          <div class="hero-card-item">Envío discreto a domicilio</div>
+          <div class="hero-card-item">Seguimiento mensual incluido</div>
+        </div>
+        <button class="hero-card-btn">Ver mi tratamiento →</button>
+        <div class="hero-card-footer">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M7 1L8.5 5H13L9.5 7.5L11 12L7 9L3 12L4.5 7.5L1 5H5.5L7 1Z" fill="#3D7A58"/>
+          </svg>
+          Sin compromisos · Cancela cuando quieras
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ TICKER ══ -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">Vigor Capilar <span class="dot"></span></span>
+    <span class="ticker-item">Vigor Metabólico <span class="dot"></span></span>
+    <span class="ticker-item">Vigor Íntimo <span class="dot"></span></span>
+    <span class="ticker-item">Vigor Diario <span class="dot"></span></span>
+    <span class="ticker-item">Diagnóstico en 24h <span class="dot"></span></span>
+    <span class="ticker-item">Sin estigmas <span class="dot"></span></span>
+    <span class="ticker-item">Conveniencia clínica <span class="dot"></span></span>
+    <span class="ticker-item">Envío discreto <span class="dot"></span></span>
+    <span class="ticker-item">Vigor Capilar <span class="dot"></span></span>
+    <span class="ticker-item">Vigor Metabólico <span class="dot"></span></span>
+    <span class="ticker-item">Vigor Íntimo <span class="dot"></span></span>
+    <span class="ticker-item">Vigor Diario <span class="dot"></span></span>
+    <span class="ticker-item">Diagnóstico en 24h <span class="dot"></span></span>
+    <span class="ticker-item">Sin estigmas <span class="dot"></span></span>
+    <span class="ticker-item">Conveniencia clínica <span class="dot"></span></span>
+    <span class="ticker-item">Envío discreto <span class="dot"></span></span>
+  </div>
+</div>
+
+<!-- ══ LÍNEAS ══ -->
+<section class="products" id="productos">
+  <div class="products-header reveal">
+    <div>
+      <div class="section-label">Ecosistema Vigor</div>
+      <div class="section-title">Cuatro líneas.<br>Un solo objetivo.</div>
+    </div>
+    <a href="#">Ver todas las líneas →</a>
+  </div>
+
+  <div class="products-grid reveal">
+    <div class="product-card">
+      <div class="product-num-ghost">01</div>
+      <div class="product-tag">Capilar</div>
+      <div class="product-name">Vigor<br>Capilar</div>
+      <p class="product-desc">Mantén tu cabello desde el primer síntoma. Tratamientos preventivos y restaurativos con respaldo clínico real.</p>
+      <a href="#" class="product-cta"><span class="product-cta-line"></span>Conocer más</a>
+    </div>
+    <div class="product-card">
+      <div class="product-num-ghost">02</div>
+      <div class="product-tag">Metabólico</div>
+      <div class="product-name">Vigor<br>Metabólico</div>
+      <p class="product-desc">Optimiza tu metabolismo, quema grasa de verdad y mejora tu composición corporal con ciencia aplicada.</p>
+      <a href="#" class="product-cta"><span class="product-cta-line"></span>Conocer más</a>
+    </div>
+    <div class="product-card">
+      <div class="product-num-ghost">03</div>
+      <div class="product-tag">Diario</div>
+      <div class="product-name">Vigor<br>Diario</div>
+      <p class="product-desc">Lo que haces todos los días te define. Vitaminas personalizadas, cuidado de piel y salud preventiva.</p>
+      <a href="#" class="product-cta"><span class="product-cta-line"></span>Conocer más</a>
+    </div>
+    <div class="product-card">
+      <div class="product-num-ghost">04</div>
+      <div class="product-tag">Íntimo</div>
+      <div class="product-name">Vigor<br>Íntimo</div>
+      <p class="product-desc">Rinde al máximo cuando más importa. Salud sexual directa, discreta y sin rodeos.</p>
+      <a href="#" class="product-cta"><span class="product-cta-line"></span>Conocer más</a>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CÓMO FUNCIONA ══ -->
+<section class="how" id="como-funciona">
+  <div class="how-header reveal">
+    <div>
+      <div class="section-label">El proceso</div>
+      <div class="section-title">De la consulta<br>al tratamiento.</div>
+    </div>
+    <p class="how-sub">Sin salas de espera, sin citas presenciales y sin estigmas. Todo desde tu teléfono en menos de 24 horas.</p>
+  </div>
+
+  <div class="how-steps reveal">
+    <div class="how-step">
+      <div class="how-step-num">01</div>
+      <div class="how-step-icon">📋</div>
+      <h3>Completa tu evaluación</h3>
+      <p>Responde un cuestionario médico en 5 minutos. Confidencial, rápido y diseñado por especialistas para captar lo que importa.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">02</div>
+      <div class="how-step-icon">🩺</div>
+      <h3>Tu médico lo revisa</h3>
+      <p>Un médico especialista analiza tu caso y diseña un plan de tratamiento personalizado. Sin cita. Sin esperas. En menos de 24 horas.</p>
+    </div>
+    <div class="how-step">
+      <div class="how-step-num">03</div>
+      <div class="how-step-icon">📦</div>
+      <h3>Lo recibes en casa</h3>
+      <p>Tu tratamiento llega directo a tu puerta en empaque discreto. Sin etiquetas, sin vergüenzas. Solo resultados.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MANIFESTO ══ -->
+<div class="manifesto reveal">
+  <div class="manifesto-label">La Idea Central</div>
+  <div class="manifesto-quote">
+    "La salud no es solo la ausencia de enfermedad. Es la energía para romper el sedentarismo, la resistencia para sumar kilómetros y la fuerza para construir el físico de un atleta híbrido."
+  </div>
+</div>
+
+<!-- ══ TESTIMONIOS ══ -->
+<section class="testimonials" id="testimonios">
+  <div class="testimonials-header reveal">
+    <div>
+      <div class="section-label">Lo que dicen</div>
+      <div class="section-title">Hombres reales.<br>Resultados reales.</div>
+    </div>
+  </div>
+
+  <div class="testimonials-grid reveal">
+    <div class="testimonial-card">
+      <div class="testimonial-stars">
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+      </div>
+      <p class="testimonial-text">"En 3 meses de Vigor Capilar la caída se redujo notablemente. El proceso fue tan sencillo que no lo podía creer. Sin citas, sin esperas."</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">R</div>
+        <div>
+          <div class="testimonial-name">Ricardo M.</div>
+          <div class="testimonial-meta">Vigor Capilar · 34 años · Monterrey</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+      </div>
+      <p class="testimonial-text">"Entrenaba 5 veces por semana pero el metabolismo no respondía. Con Vigor Metabólico bajé 8 kilos en 4 meses sin sacrificar músculo."</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">A</div>
+        <div>
+          <div class="testimonial-name">Andrés V.</div>
+          <div class="testimonial-meta">Vigor Metabólico · 41 años · CDMX</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">
+        <div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div>
+      </div>
+      <p class="testimonial-text">"Lo que más me gustó fue la discreción. Todo llegó en una caja normal, sin logos ni nada. El médico me respondió en menos de 6 horas."</p>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">J</div>
+        <div>
+          <div class="testimonial-name">Javier S.</div>
+          <div class="testimonial-meta">Vigor Íntimo · 38 años · Guadalajara</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FEATURE STRIP ══ -->
+<div class="feature-strip reveal">
+  <div class="feature-strip-left">
+    <div class="section-label">Vigor Diario</div>
+    <div class="section-title">Lo que haces<br>hoy te define<br>mañana.</div>
+    <p>Vitaminas personalizadas basadas en tu perfil, tu rutina y tus objetivos. Salud preventiva sin complicaciones.</p>
+    <button class="btn-primary">Conocer Vigor Diario →</button>
+  </div>
+
+  <div class="feature-strip-right">
+    <div class="feature-item">
+      <span class="feature-item-icon">🧬</span>
+      <h4>Vitaminas personalizadas</h4>
+      <p>Formuladas según tu perfil metabólico, estilo de vida y objetivos de salud.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-item-icon">🌿</span>
+      <h4>Cuidado de piel</h4>
+      <p>Rutinas simples y efectivas para hombres que no tienen tiempo que perder.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-item-icon">🛡️</span>
+      <h4>Salud preventiva</h4>
+      <p>Actúa antes de que el problema llegue, no cuando ya es demasiado tarde.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-item-icon">📊</span>
+      <h4>Seguimiento continuo</h4>
+      <p>Tu médico ajusta el plan cada mes según tu progreso y feedback.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section reveal">
+  <div class="cta-eyebrow">Empieza hoy</div>
+  <h2 class="cta-title">
+    Tu cuerpo.<br>
+    Tu rendimiento.<br>
+    <span class="outline">Tu Vigor.</span>
+  </h2>
+  <p class="cta-sub">Evaluación gratuita en 5 minutos. Sin compromisos. Tu médico lo revisa en menos de 24 horas.</p>
+  <div class="cta-actions">
+    <button class="btn-primary">Iniciar evaluación gratuita</button>
+    <button class="btn-ghost">Ver todas las líneas</button>
+  </div>
+  <p class="cta-note">Sin tarjeta de crédito · Envío discreto · Cancela cuando quieras</p>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="footer-brand">
+    <span class="footer-logo-text"><span class="v">v</span>igor</span>
+    <p>Conveniencia clínica sin la fricción de la medicina tradicional. Salud masculina hecha para hombres que rinden al máximo.</p>
+  </div>
+  <div class="footer-col">
+    <h5>Líneas</h5>
+    <ul>
+      <li><a href="#">Vigor Capilar</a></li>
+      <li><a href="#">Vigor Metabólico</a></li>
+      <li><a href="#">Vigor Diario</a></li>
+      <li><a href="#">Vigor Íntimo</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h5>Empresa</h5>
+    <ul>
+      <li><a href="#">Nosotros</a></li>
+      <li><a href="#">Médicos</a></li>
+      <li><a href="#">Blog</a></li>
+      <li><a href="#">Prensa</a></li>
+    </ul>
+  </div>
+  <div class="footer-col">
+    <h5>Soporte</h5>
+    <ul>
+      <li><a href="#">Preguntas frecuentes</a></li>
+      <li><a href="#">Privacidad</a></li>
+      <li><a href="#">Términos</a></li>
+      <li><a href="#">Contacto</a></li>
+    </ul>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>Vigor © 2025 · Salud Masculina · Performance · Vitalidad Proactiva</p>
+  <p>Todos los tratamientos son supervisados por médicos certificados.</p>
+</div>
+
+<script>
+  // Cursor
+  const cur = document.getElementById('cursor');
+  const ring = document.getElementById('ring');
+  let mx=0,my=0,tx=0,ty=0;
+
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cur.style.transform=`translate(${mx-4}px,${my-4}px)`;
+  });
+
+  (function tick(){
+    tx+=(mx-tx)*0.1; ty+=(my-ty)*0.1;
+    ring.style.transform=`translate(${tx-15}px,${ty-15}px)`;
+    requestAnimationFrame(tick);
+  })();
+
+  // Nav scroll
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  // Reveal
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach((e,i) => {
+      if(e.isIntersecting){
+        setTimeout(()=>e.target.classList.add('visible'), i*80);
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>
